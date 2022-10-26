@@ -24,7 +24,7 @@ from bokeh.models.widgets import Button
 from bokeh.models import CustomJS
 from streamlit_bokeh_events import streamlit_bokeh_events
 warnings.filterwarnings('ignore')
-st.set_page_config(page_title="microprediction: One Hour Ahead Stochastic Wind-Speed Predictions", page_icon=None,
+st.set_page_config(page_title="microprediction: One Hour Ahead Stochastic Travel Time Predictions", page_icon=None,
                    layout="wide", initial_sidebar_state="auto", menu_items=None)
 
 
@@ -32,7 +32,7 @@ st.set_page_config(page_title="microprediction: One Hour Ahead Stochastic Wind-S
 def get_base64_of_bin_file(bin_file):
     with open(bin_file, 'rb') as f:
         data = f.read()
-    return base64.b64encode(data).decode()
+    return base64.b64encode(data).decode()          
 
 
 @st.cache(allow_output_mutation=True)
@@ -138,7 +138,7 @@ images_cols = images_container.columns([5, 9])
 # images_cols[2].image(SIPmath_Standard, unsafe_allow_html=True)
 # images_cols[0].markdown(PM_logo, unsafe_allow_html=True)
 # images_cols[4].markdown(Metalog_Distribution, unsafe_allow_html=True)
-images_cols[1].header("One Hour Ahead Stochastic Wind-Speed Predictions")
+images_cols[1].header("One Hour Ahead Stochastic Travel Time Predictions")
 images_cols[1].markdown('''
     <p class="sub-font">If you can measure it, consider it predicted in real time.</p>''', unsafe_allow_html=True)
 # images_cols[3].markdown(HDR_Generator, unsafe_allow_html=True)
@@ -469,7 +469,7 @@ def plot(m, big_plots=None, csv=None, term=None, name=None, key=None):
                                linewidth=2, c='darkblue')
                     ax.patch.set_facecolor('white')
                     ax.axes.yaxis.set_ticks([])
-                    ax.set(title='Wind Speed in 1 Hour')
+                    ax.set(title='Travel Time in 1 Hour')
                     newax = fig.add_axes([0.5,0.5,0.5,0.5], anchor=(0.59, 0.15), zorder=1)
                     newax.imshow(im)
                     newax.axis('off')
@@ -514,7 +514,7 @@ def plot(m, big_plots=None, csv=None, term=None, name=None, key=None):
                 #     # ax[1].set(title=chart_title, ylabel='CDF',
                 #     #           xlabel='Quantiles')
             plt.tight_layout(rect=[0, 0, 0.75, 1])
-            # graphs_container.subheader('Wind Speed in 1 Hour')
+            # graphs_container.subheader('Travel Time in 1 Hour')
             graphs_container.pyplot(plt)
             if st.session_state['mfitted'][key][name]['plot']['big plot'] is None:
                 temp_img = io.BytesIO()
@@ -689,6 +689,38 @@ def get_micropredictions():
     predictions = mr.get_predictions(name=NAME,write_key=HAMOOSE_CHEETAH,delay=mr.DELAYS[-1])
     print(predictions)
     return predictions
+
+def get_nyc_data():
+
+    # make sure to install these packages before running:
+    # pip install pandas
+    # pip install sodapy
+
+    from sodapy import Socrata
+
+    # Unauthenticated client only works with public data sets. Note 'None'
+    # in place of application token, and no username or password:
+    client = Socrata("data.cityofnewyork.us", None)
+    client.timeout = 30
+    # Example authenticated client (needed for non-public datasets):
+    # client = Socrata(data.cityofnewyork.us,
+    #                  MyAppToken,
+    #                  username="user@example.com",
+    #                  password="AFakePassword")
+
+    # First 2000 results, returned as JSON from API / converted to Python list of
+    # dictionaries by sodapy.
+    results = client.get("i4gi-tjb9", where= "link_name == 'SIE E RICHMOND AVENUE - WOOLEY AVENUE'", limit=288)
+
+    # Convert to pandas DataFrame
+    results_df = pd.DataFrame.from_records(results)
+    results_df['travel_time'] = pd.to_numeric(results_df['travel_time'], errors= "coerce")
+    
+    # results_df.to_csv('data.csv', index=False)
+    print("results_df[['travel_time']] : ")
+    print(results_df[['travel_time']])
+    return results_df[['travel_time']]
+
 
 def sent_to_pastebin(filename, file):
     payload = {"api_dev_key": '7lc7IMiM_x5aMUFFudCiCo35t4o0Sxx6',
@@ -1743,9 +1775,11 @@ def input_data(name, i, df, probs=None):
 #         # pass
 #     input_data("Unknown", 0, pd_data, pd_data.index.to_list())
 # elif data_type == 'API':
-col_name = 'wind_speed'
-micro_data = get_micropredictions()
-micro_data_df = pd.DataFrame([ p for p in micro_data if p > 0.01 ], columns=[col_name])
+col_name = 'Travel Time'
+# micro_data = get_micropredictions()
+# micro_data_df = pd.DataFrame([ p for p in micro_data if p > 0.01 ], columns=[col_name])
+micro_data_df = get_nyc_data()
+print(micro_data_df.dtypes)
 name = micro_data_df.columns[0]
 # table_container.subheader(f"Preview for {name}")
 # table_container.write(micro_data_df[:10].to_html(
@@ -1754,7 +1788,7 @@ probs=np.nan
 boundedness='u'
 bounds=[0, 1]
 big_plots=True
-user_terms=5
+user_terms=3
 graphs=False
 dependence = 'independent'
 file_name = f'{name}.SIPmath'
