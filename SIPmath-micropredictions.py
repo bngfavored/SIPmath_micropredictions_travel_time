@@ -465,8 +465,10 @@ def plot(m, big_plots=None, csv=None, term=None, name=None, key=None):
                     plt.rcParams["figure.figsize"] = [7.00, 3.50]
                     plt.rcParams["figure.autolayout"] = True
                     im = plt.imread(path+'/images/SIPmath Standard Certified.png') # insert local path of the image.
-                    ax.plot(InitialResults[str(i) + ' Terms']['quantileValues'], InitialResults[str(i) + ' Terms']['pdfValues'],
-                               linewidth=2, c='darkblue')
+                    ax.plot(InitialResults[str(i) + ' Terms']['quantileValues'], 
+                                InitialResults[str(i) + ' Terms']['pdfValues'],
+                                linewidth=2, 
+                                c='darkblue')
                     ax.patch.set_facecolor('white')
                     ax.axes.yaxis.set_ticks([])
                     ax.set(title='Travel Time in 1 Hour')
