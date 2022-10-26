@@ -132,3 +132,5 @@ dmypy.json
 .pyre/
 
 .streamlit/secrets.toml
+
+.vscode
