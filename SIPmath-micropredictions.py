@@ -471,7 +471,7 @@ def plot(m, big_plots=None, csv=None, term=None, name=None, key=None):
                                 c='darkblue')
                     ax.patch.set_facecolor('white')
                     ax.axes.yaxis.set_ticks([])
-                    ax.set(title='Travel Time in 1 Hour')
+                    ax.set(title='Travel Time in Minutes', xlabel='Minutes')
                     newax = fig.add_axes([0.5,0.5,0.5,0.5], anchor=(0.59, 0.15), zorder=1)
                     newax.imshow(im)
                     newax.axis('off')
@@ -1787,8 +1787,8 @@ name = micro_data_df.columns[0]
 # table_container.write(micro_data_df[:10].to_html(
 #     index=False), unsafe_allow_html=True)
 probs=np.nan
-boundedness='u'
-bounds=[0, 1]
+boundedness='sl'
+bounds=[0]
 big_plots=True
 user_terms=3
 graphs=False
