@@ -108,5 +108,5 @@ XlsxWriter==3.0.2
 yarg==0.1.9
 microprediction
 bokeh
-streamlit_bokeh_events
+streamlit_bokeh_events==0.1.2
 sodapy

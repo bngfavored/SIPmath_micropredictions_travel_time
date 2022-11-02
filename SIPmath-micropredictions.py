@@ -24,7 +24,8 @@ from bokeh.models.widgets import Button
 from bokeh.models import CustomJS
 from streamlit_bokeh_events import streamlit_bokeh_events
 warnings.filterwarnings('ignore')
-st.set_page_config(page_title="microprediction: One Hour Ahead Stochastic Travel Time Predictions", page_icon=None,
+main_title = 'Several Minutes Ahead Stochastic Travel Time Predictions'
+st.set_page_config(page_title=f"microprediction: {main_title}", page_icon=None,
                    layout="wide", initial_sidebar_state="auto", menu_items=None)
 
 
@@ -138,7 +139,7 @@ images_cols = images_container.columns([5, 9])
 # images_cols[2].image(SIPmath_Standard, unsafe_allow_html=True)
 # images_cols[0].markdown(PM_logo, unsafe_allow_html=True)
 # images_cols[4].markdown(Metalog_Distribution, unsafe_allow_html=True)
-images_cols[1].header("One Hour Ahead Stochastic Travel Time Predictions")
+images_cols[1].header(main_title)
 images_cols[1].markdown('''
     <p class="sub-font">If you can measure it, consider it predicted in real time.</p>''', unsafe_allow_html=True)
 # images_cols[3].markdown(HDR_Generator, unsafe_allow_html=True)
